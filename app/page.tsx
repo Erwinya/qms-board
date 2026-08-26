@@ -1,65 +1,83 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getBoardSummary, getInspections, getNcrs } from "@/lib/board";
+import { ResultBadge, SeverityBadge, StatusBadge } from "@/lib/badges";
+import { DataTable, formatTime } from "@/lib/DataTable";
 
-export default function Home() {
+export default function HomePage() {
+  const summary = getBoardSummary();
+  const recentInspections = getInspections().slice(0, 4);
+  const openNcrs = getNcrs().filter((n) => n.status !== "CLOSED" && n.status !== "CANCELLED");
+
+  const cards = [
+    { label: "Active inspections", value: summary.activeInspections, hint: "PLANNED + IN_PROGRESS" },
+    { label: "Failed inspections", value: summary.failed, hint: "result = FAIL" },
+    { label: "Open / review NCRs", value: summary.openNcrs, hint: "needs attention" },
+    { label: "Contained NCRs", value: summary.contained, hint: "action recorded" },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="space-y-8">
+      <section>
+        <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          Quality operations board
+        </h1>
+        <p className="mt-3 max-w-2xl text-slate-400">
+          Sample overview of inspections and nonconformance reports. Designed to sit alongside{" "}
+          <span className="mono text-slate-300">qms-inspection-service</span> and{" "}
+          <span className="mono text-slate-300">qms-ncr-service</span>.
+        </p>
+      </section>
+
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((card) => (
+          <article
+            key={card.label}
+            className="rounded-xl border border-slate-800 bg-[#121820] p-4 shadow-[0_12px_30px_rgba(0,0,0,0.22)]"
+          >
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{card.label}</p>
+            <p className="mt-2 text-3xl font-semibold text-teal-300">{card.value}</p>
+            <p className="mt-1 text-xs text-slate-500">{card.hint}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex items-end justify-between gap-3">
+          <h2 className="text-lg font-semibold text-white">Recent inspections</h2>
+          <Link href="/inspections" className="text-sm font-medium text-teal-400 hover:text-teal-300">
+            View all
+          </Link>
+        </div>
+        <DataTable
+          columns={["Title", "Lot", "Status", "Result", "Updated"]}
+          rows={recentInspections.map((item) => [
+            item.title,
+            <span key={`${item.id}-lot`} className="mono text-slate-300">{item.lotNumber}</span>,
+            <StatusBadge key={`${item.id}-status`} value={item.status} />,
+            <ResultBadge key={`${item.id}-result`} value={item.result} />,
+            <span key={`${item.id}-time`} className="text-slate-400">{formatTime(item.updatedAt)}</span>,
+          ])}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex items-end justify-between gap-3">
+          <h2 className="text-lg font-semibold text-white">Open NCR queue</h2>
+          <Link href="/ncrs" className="text-sm font-medium text-teal-400 hover:text-teal-300">
+            View all
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <DataTable
+          columns={["NCR", "Title", "Severity", "Status", "Lot"]}
+          rows={openNcrs.map((item) => [
+            <span key={`${item.id}-num`} className="mono text-slate-300">{item.ncrNumber}</span>,
+            item.title,
+            <SeverityBadge key={`${item.id}-sev`} value={item.severity} />,
+            <StatusBadge key={`${item.id}-status`} value={item.status} />,
+            <span key={`${item.id}-lot`} className="mono text-slate-300">{item.lotNumber}</span>,
+          ])}
+        />
+      </section>
     </div>
   );
 }

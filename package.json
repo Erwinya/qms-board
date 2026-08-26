@@ -1,7 +1,8 @@
 {
-  "name": "nextjs",
-  "version": "0.1.0",
+  "name": "qms-board",
+  "version": "1.0.0",
   "private": true,
+  "description": "Quality board for inspection and NCR summaries",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
