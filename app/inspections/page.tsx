@@ -19,6 +19,7 @@ export default function InspectionsPage() {
       </div>
       <DataTable
         columns={["Title", "Lot", "Part", "Inspector", "Status", "Result", "Related NCR", "Updated"]}
+        emptyMessage="No inspections are available."
         rows={inspections.map((item) => [
           item.title,
           <span key={`${item.id}-lot`} className="mono">{item.lotNumber}</span>,

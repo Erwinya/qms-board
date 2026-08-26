@@ -50,6 +50,7 @@ export default function HomePage() {
         </div>
         <DataTable
           columns={["Title", "Lot", "Status", "Result", "Updated"]}
+          emptyMessage="No recent inspections to display."
           rows={recentInspections.map((item) => [
             item.title,
             <span key={`${item.id}-lot`} className="mono text-slate-300">{item.lotNumber}</span>,
@@ -69,6 +70,7 @@ export default function HomePage() {
         </div>
         <DataTable
           columns={["NCR", "Title", "Severity", "Status", "Lot"]}
+          emptyMessage="No open NCRs need attention."
           rows={openNcrs.map((item) => [
             <span key={`${item.id}-num`} className="mono text-slate-300">{item.ncrNumber}</span>,
             item.title,

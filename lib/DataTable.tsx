@@ -11,9 +11,11 @@ function formatTime(value: string) {
 export function DataTable({
   columns,
   rows,
+  emptyMessage = "No records found.",
 }: {
   columns: string[];
   rows: Array<Array<ReactNode>>;
+  emptyMessage?: string;
 }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-800 bg-[#121820] shadow-[0_18px_40px_rgba(0,0,0,0.28)]">
@@ -28,6 +30,13 @@ export function DataTable({
           </tr>
         </thead>
         <tbody>
+          {rows.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length} className="px-4 py-10 text-center text-slate-400">
+                {emptyMessage}
+              </td>
+            </tr>
+          ) : null}
           {rows.map((row, index) => (
             <tr key={index} className="border-b border-slate-800/80 last:border-0">
               {row.map((cell, cellIndex) => (

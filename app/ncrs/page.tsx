@@ -19,6 +19,7 @@ export default function NcrsPage() {
       </div>
       <DataTable
         columns={["NCR", "Title", "Lot", "Severity", "Status", "Containment", "Updated"]}
+        emptyMessage="No nonconformance reports are available."
         rows={ncrs.map((item) => [
           <span key={`${item.id}-num`} className="mono">{item.ncrNumber}</span>,
           item.title,
