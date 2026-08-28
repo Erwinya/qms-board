@@ -1,10 +1,4 @@
-import Link from "next/link";
-
-const links = [
-  { href: "/", label: "Board" },
-  { href: "/inspections", label: "Inspections" },
-  { href: "/ncrs", label: "NCRs" },
-];
+import { NavLinks } from "@/lib/NavLinks";
 
 export function SiteHeader() {
   return (
@@ -18,17 +12,7 @@ export function SiteHeader() {
             Inspection &amp; NCR overview
           </p>
         </div>
-        <nav className="flex flex-wrap gap-1">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <NavLinks />
       </div>
     </header>
   );
