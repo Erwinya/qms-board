@@ -22,6 +22,11 @@ Companion APIs:
 - TypeScript
 - Tailwind CSS
 
+
+## Screenshot
+
+![QMS Board overview](docs/board.png)
+
 ## Run
 
 ```bash
