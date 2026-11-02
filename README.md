@@ -15,6 +15,7 @@ Companion APIs:
 - Inspections table (status, result, related NCR)
 - NCR queue (severity, status, containment)
 - Sample semiconductor lot data (ready to swap for live API later)
+- GitHub Actions CI (`npm run lint` + `npm run build`)
 
 ## Stack
 
