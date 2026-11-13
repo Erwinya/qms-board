@@ -12,7 +12,8 @@ Companion APIs:
 ## Features
 
 - Board overview with active/failed inspections and open/contained NCRs
-- Inspections table (status, result, related NCR)
+- Clickable summary cards and status filter chips on Inspections / NCR pages
+- Inspections table (status, result, related NCR links)
 - NCR queue (severity, status, containment)
 - Sample semiconductor lot data (ready to swap for live API later)
 - GitHub Actions CI (`npm run lint` + `npm run build`)

@@ -10,7 +10,7 @@ export const inspections: Inspection[] = [
     status: "COMPLETED",
     result: "FAIL",
     relatedNcrNumber: "NCR-2026-0001",
-    updatedAt: "2026-08-20T08:15:00Z",
+    updatedAt: "2026-11-10T08:15:00Z",
   },
   {
     id: "2",
@@ -21,7 +21,7 @@ export const inspections: Inspection[] = [
     status: "IN_PROGRESS",
     result: null,
     relatedNcrNumber: null,
-    updatedAt: "2026-08-25T02:40:00Z",
+    updatedAt: "2026-11-12T02:40:00Z",
   },
   {
     id: "3",
@@ -32,7 +32,7 @@ export const inspections: Inspection[] = [
     status: "COMPLETED",
     result: "PASS",
     relatedNcrNumber: null,
-    updatedAt: "2026-08-18T14:05:00Z",
+    updatedAt: "2026-11-08T14:05:00Z",
   },
   {
     id: "4",
@@ -43,7 +43,7 @@ export const inspections: Inspection[] = [
     status: "PLANNED",
     result: null,
     relatedNcrNumber: null,
-    updatedAt: "2026-08-24T11:00:00Z",
+    updatedAt: "2026-11-11T11:00:00Z",
   },
   {
     id: "5",
@@ -54,7 +54,7 @@ export const inspections: Inspection[] = [
     status: "COMPLETED",
     result: "CONDITIONAL",
     relatedNcrNumber: "NCR-2026-0003",
-    updatedAt: "2026-08-22T16:30:00Z",
+    updatedAt: "2026-11-09T16:30:00Z",
   },
 ];
 
@@ -67,7 +67,7 @@ export const ncrs: Ncr[] = [
     severity: "HIGH",
     status: "UNDER_REVIEW",
     containmentAction: null,
-    updatedAt: "2026-08-20T09:00:00Z",
+    updatedAt: "2026-11-10T09:00:00Z",
   },
   {
     id: "2",
@@ -77,7 +77,7 @@ export const ncrs: Ncr[] = [
     severity: "MEDIUM",
     status: "CONTAINED",
     containmentAction: "Hold lot; re-clean and re-inspect sample",
-    updatedAt: "2026-08-21T10:20:00Z",
+    updatedAt: "2026-11-11T10:20:00Z",
   },
   {
     id: "3",
@@ -87,7 +87,7 @@ export const ncrs: Ncr[] = [
     severity: "CRITICAL",
     status: "OPEN",
     containmentAction: null,
-    updatedAt: "2026-08-22T17:00:00Z",
+    updatedAt: "2026-11-09T17:00:00Z",
   },
   {
     id: "4",
@@ -97,6 +97,6 @@ export const ncrs: Ncr[] = [
     severity: "LOW",
     status: "CLOSED",
     containmentAction: "Accept with note; update work instruction",
-    updatedAt: "2026-08-15T12:10:00Z",
+    updatedAt: "2026-11-05T12:10:00Z",
   },
 ];

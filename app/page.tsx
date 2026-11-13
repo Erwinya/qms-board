@@ -1,18 +1,38 @@
 import Link from "next/link";
-import { getBoardSummary, getInspections, getNcrs } from "@/lib/board";
+import { getAttentionNcrs, getBoardSummary, getRecentInspections } from "@/lib/board";
 import { ResultBadge, SeverityBadge, StatusBadge } from "@/lib/badges";
 import { DataTable, formatTime } from "@/lib/DataTable";
 
 export default function HomePage() {
   const summary = getBoardSummary();
-  const recentInspections = getInspections().slice(0, 4);
-  const openNcrs = getNcrs().filter((n) => n.status !== "CLOSED" && n.status !== "CANCELLED");
+  const recentInspections = getRecentInspections(4);
+  const openNcrs = getAttentionNcrs();
 
   const cards = [
-    { label: "Active inspections", value: summary.activeInspections, hint: "PLANNED + IN_PROGRESS" },
-    { label: "Failed inspections", value: summary.failed, hint: "result = FAIL" },
-    { label: "Open / review NCRs", value: summary.openNcrs, hint: "needs attention" },
-    { label: "Contained NCRs", value: summary.contained, hint: "action recorded" },
+    {
+      label: "Active inspections",
+      value: summary.activeInspections,
+      hint: "PLANNED + IN_PROGRESS",
+      href: "/inspections?status=IN_PROGRESS",
+    },
+    {
+      label: "Failed inspections",
+      value: summary.failed,
+      hint: "result = FAIL",
+      href: "/inspections",
+    },
+    {
+      label: "Open / review NCRs",
+      value: summary.openNcrs,
+      hint: "needs attention",
+      href: "/ncrs?status=OPEN",
+    },
+    {
+      label: "Contained NCRs",
+      value: summary.contained,
+      hint: "action recorded",
+      href: "/ncrs?status=CONTAINED",
+    },
   ];
 
   return (
@@ -30,14 +50,15 @@ export default function HomePage() {
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
-          <article
+          <Link
             key={card.label}
-            className="rounded-xl border border-slate-800 bg-[#121820] p-4 shadow-[0_12px_30px_rgba(0,0,0,0.22)]"
+            href={card.href}
+            className="rounded-xl border border-slate-800 bg-[#121820] p-4 shadow-[0_12px_30px_rgba(0,0,0,0.22)] transition hover:border-teal-700/50"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{card.label}</p>
             <p className="mt-2 text-3xl font-semibold text-teal-300">{card.value}</p>
             <p className="mt-1 text-xs text-slate-500">{card.hint}</p>
-          </article>
+          </Link>
         ))}
       </section>
 
@@ -72,7 +93,13 @@ export default function HomePage() {
           columns={["NCR", "Title", "Severity", "Status", "Lot"]}
           emptyMessage="No open NCRs need attention."
           rows={openNcrs.map((item) => [
-            <span key={`${item.id}-num`} className="mono text-slate-300">{item.ncrNumber}</span>,
+            <Link
+              key={`${item.id}-num`}
+              href={`/ncrs?status=${item.status}`}
+              className="mono text-teal-300 hover:text-teal-200"
+            >
+              {item.ncrNumber}
+            </Link>,
             item.title,
             <SeverityBadge key={`${item.id}-sev`} value={item.severity} />,
             <StatusBadge key={`${item.id}-status`} value={item.status} />,

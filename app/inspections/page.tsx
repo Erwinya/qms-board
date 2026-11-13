@@ -1,13 +1,34 @@
+import Link from "next/link";
 import { getInspections } from "@/lib/board";
 import { ResultBadge, StatusBadge } from "@/lib/badges";
 import { DataTable, formatTime } from "@/lib/DataTable";
+import { FilterChips } from "@/lib/FilterChips";
+import type { InspectionStatus } from "@/lib/types";
 
 export const metadata = {
   title: "Inspections | QMS Board",
 };
 
-export default function InspectionsPage() {
-  const inspections = getInspections();
+const STATUS_OPTIONS: Array<{ label: string; value: string | null }> = [
+  { label: "All", value: null },
+  { label: "PLANNED", value: "PLANNED" },
+  { label: "IN_PROGRESS", value: "IN_PROGRESS" },
+  { label: "COMPLETED", value: "COMPLETED" },
+  { label: "CANCELLED", value: "CANCELLED" },
+];
+
+function isInspectionStatus(value: string | undefined): value is InspectionStatus {
+  return value === "PLANNED" || value === "IN_PROGRESS" || value === "COMPLETED" || value === "CANCELLED";
+}
+
+export default async function InspectionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const { status: rawStatus } = await searchParams;
+  const status = isInspectionStatus(rawStatus) ? rawStatus : undefined;
+  const inspections = getInspections(status);
 
   return (
     <div className="space-y-6">
@@ -17,9 +38,14 @@ export default function InspectionsPage() {
           Planned-to-completed quality checks with optional NCR linkage.
         </p>
       </div>
+      <FilterChips basePath="/inspections" options={STATUS_OPTIONS} active={status ?? null} />
       <DataTable
         columns={["Title", "Lot", "Part", "Inspector", "Status", "Result", "Related NCR", "Updated"]}
-        emptyMessage="No inspections are available."
+        emptyMessage={
+          status
+            ? `No inspections with status ${status}.`
+            : "No inspections are available."
+        }
         rows={inspections.map((item) => [
           item.title,
           <span key={`${item.id}-lot`} className="mono">{item.lotNumber}</span>,
@@ -28,7 +54,13 @@ export default function InspectionsPage() {
           <StatusBadge key={`${item.id}-status`} value={item.status} />,
           <ResultBadge key={`${item.id}-result`} value={item.result} />,
           item.relatedNcrNumber ? (
-            <span key={`${item.id}-ncr`} className="mono text-teal-300">{item.relatedNcrNumber}</span>
+            <Link
+              key={`${item.id}-ncr`}
+              href="/ncrs"
+              className="mono text-teal-300 hover:text-teal-200"
+            >
+              {item.relatedNcrNumber}
+            </Link>
           ) : (
             "—"
           ),
