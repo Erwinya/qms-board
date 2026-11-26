@@ -28,7 +28,9 @@ export default async function InspectionsPage({
 }) {
   const { status: rawStatus } = await searchParams;
   const status = isInspectionStatus(rawStatus) ? rawStatus : undefined;
-  const inspections = getInspections(status);
+  const inspections = getInspections({
+    statuses: status ? [status] : undefined,
+  });
 
   return (
     <div className="space-y-6">

@@ -34,7 +34,9 @@ export default async function NcrsPage({
 }) {
   const { status: rawStatus } = await searchParams;
   const status = isNcrStatus(rawStatus) ? rawStatus : undefined;
-  const ncrs = getNcrs(status);
+  const ncrs = getNcrs({
+    statuses: status ? [status] : undefined,
+  });
 
   return (
     <div className="space-y-6">
