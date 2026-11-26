@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAttentionNcrs, getBoardSummary, getRecentInspections } from "@/lib/board";
 import { ResultBadge, SeverityBadge, StatusBadge } from "@/lib/badges";
 import { DataTable, formatTime } from "@/lib/DataTable";
+import { buildFilterHref } from "@/lib/filters";
 
 export default function HomePage() {
   const summary = getBoardSummary();
@@ -13,19 +14,23 @@ export default function HomePage() {
       label: "Active inspections",
       value: summary.activeInspections,
       hint: "PLANNED + IN_PROGRESS",
-      href: "/inspections?status=IN_PROGRESS",
+      href: buildFilterHref("/inspections", {
+        status: ["PLANNED", "IN_PROGRESS"],
+      }),
     },
     {
       label: "Failed inspections",
       value: summary.failed,
       hint: "result = FAIL",
-      href: "/inspections",
+      href: buildFilterHref("/inspections", { result: ["FAIL"] }),
     },
     {
       label: "Open / review NCRs",
       value: summary.openNcrs,
       hint: "needs attention",
-      href: "/ncrs?status=OPEN",
+      href: buildFilterHref("/ncrs", {
+        status: ["OPEN", "UNDER_REVIEW"],
+      }),
     },
     {
       label: "Contained NCRs",

@@ -2,7 +2,7 @@ import { getNcrs } from "@/lib/board";
 import { SeverityBadge, StatusBadge } from "@/lib/badges";
 import { DataTable, formatTime } from "@/lib/DataTable";
 import { FilterChips } from "@/lib/FilterChips";
-import type { NcrStatus } from "@/lib/types";
+import { parseNcrFilters, type QueryValue } from "@/lib/filters";
 
 export const metadata = {
   title: "NCRs | QMS Board",
@@ -17,26 +17,15 @@ const STATUS_OPTIONS: Array<{ label: string; value: string | null }> = [
   { label: "CANCELLED", value: "CANCELLED" },
 ];
 
-function isNcrStatus(value: string | undefined): value is NcrStatus {
-  return (
-    value === "OPEN" ||
-    value === "UNDER_REVIEW" ||
-    value === "CONTAINED" ||
-    value === "CLOSED" ||
-    value === "CANCELLED"
-  );
-}
-
 export default async function NcrsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: QueryValue }>;
 }) {
-  const { status: rawStatus } = await searchParams;
-  const status = isNcrStatus(rawStatus) ? rawStatus : undefined;
-  const ncrs = getNcrs({
-    statuses: status ? [status] : undefined,
-  });
+  const filters = parseNcrFilters(await searchParams);
+  const ncrs = getNcrs(filters);
+  const activeStatus =
+    filters.statuses.length === 1 ? filters.statuses[0] : null;
 
   return (
     <div className="space-y-6">
@@ -46,10 +35,14 @@ export default async function NcrsPage({
           Severity, status, and containment context for open quality events.
         </p>
       </div>
-      <FilterChips basePath="/ncrs" options={STATUS_OPTIONS} active={status ?? null} />
+      <FilterChips basePath="/ncrs" options={STATUS_OPTIONS} active={activeStatus} />
       <DataTable
         columns={["NCR", "Title", "Lot", "Severity", "Status", "Containment", "Updated"]}
-        emptyMessage={status ? `No NCRs with status ${status}.` : "No nonconformance reports are available."}
+        emptyMessage={
+          filters.statuses.length
+            ? "No NCRs match the selected filters."
+            : "No nonconformance reports are available."
+        }
         rows={ncrs.map((item) => [
           <span key={`${item.id}-num`} className="mono">{item.ncrNumber}</span>,
           item.title,

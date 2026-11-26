@@ -3,7 +3,7 @@ import { getInspections } from "@/lib/board";
 import { ResultBadge, StatusBadge } from "@/lib/badges";
 import { DataTable, formatTime } from "@/lib/DataTable";
 import { FilterChips } from "@/lib/FilterChips";
-import type { InspectionStatus } from "@/lib/types";
+import { parseInspectionFilters, type QueryValue } from "@/lib/filters";
 
 export const metadata = {
   title: "Inspections | QMS Board",
@@ -17,20 +17,16 @@ const STATUS_OPTIONS: Array<{ label: string; value: string | null }> = [
   { label: "CANCELLED", value: "CANCELLED" },
 ];
 
-function isInspectionStatus(value: string | undefined): value is InspectionStatus {
-  return value === "PLANNED" || value === "IN_PROGRESS" || value === "COMPLETED" || value === "CANCELLED";
-}
-
 export default async function InspectionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: QueryValue; result?: QueryValue }>;
 }) {
-  const { status: rawStatus } = await searchParams;
-  const status = isInspectionStatus(rawStatus) ? rawStatus : undefined;
-  const inspections = getInspections({
-    statuses: status ? [status] : undefined,
-  });
+  const filters = parseInspectionFilters(await searchParams);
+  const inspections = getInspections(filters);
+  const activeStatus =
+    filters.statuses.length === 1 ? filters.statuses[0] : null;
+  const hasFilters = filters.statuses.length > 0 || filters.results.length > 0;
 
   return (
     <div className="space-y-6">
@@ -40,12 +36,12 @@ export default async function InspectionsPage({
           Planned-to-completed quality checks with optional NCR linkage.
         </p>
       </div>
-      <FilterChips basePath="/inspections" options={STATUS_OPTIONS} active={status ?? null} />
+      <FilterChips basePath="/inspections" options={STATUS_OPTIONS} active={activeStatus} />
       <DataTable
         columns={["Title", "Lot", "Part", "Inspector", "Status", "Result", "Related NCR", "Updated"]}
         emptyMessage={
-          status
-            ? `No inspections with status ${status}.`
+          hasFilters
+            ? "No inspections match the selected filters."
             : "No inspections are available."
         }
         rows={inspections.map((item) => [
