@@ -1,11 +1,8 @@
 import type { ReactNode } from "react";
 
 function formatTime(value: string) {
-  try {
-    return new Date(value).toLocaleString();
-  } catch {
-    return value;
-  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
 }
 
 export function DataTable({
